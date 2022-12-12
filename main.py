@@ -3,13 +3,16 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 
-data = pd.read_csv("data/top50.csv")
+data = pd.read_csv("data/unpopular.csv")
+popular = pd.read_csv("data/data2.csv")
 
 
 def len_extractor(row):
     row = str(row)
     row = row.split(" ")
+    assert [c for c in row if "Len=" in c][0]
     row = [c for c in row if "Len=" in c][0]
+    assert [c for c in row if c.isnumeric()]
     row = [c for c in row if c.isnumeric()]
     row = "".join(row)
     row = int(row)
@@ -35,7 +38,8 @@ def bit_rate():
 print(bit_rate())
 
 
-breakpoint()
+
+
 
 data["package_size"] = data["Info"].map(len_extractor)
 print(data["package_size"])
@@ -55,7 +59,7 @@ print(sum(lengths_over_hundred["package_size"]) / lengths_over_hundred.shape[0])
 requests = data[data['Info'].str.contains("[PSH, ACK]", regex=False)]
 
 ack = data[data['Info'].str.contains("[ACK]", regex=False)]
-print(sum_tobits()/tot_time)
+
 #data.info()
 
 print(ack.shape)
@@ -68,8 +72,9 @@ print(requests.shape)
 
 
 plt.yscale('log', base=10)
-plt.plot(requests["Time"], requests["Length"])
-#plt.plot(data["Time"], data["Length"])
+#plt.plot(requests["Time"], requests["Length"])
+plt.plot(popular["Time"], popular["Length"])
+plt.plot(data["Time"], data["Length"])
 plt.xlabel('Seconds Since First Captured Packet')
 plt.ylabel('byte Length')
 plt.tight_layout()
@@ -77,6 +82,7 @@ plt.gca().yaxis.set_major_formatter(lambda x, pos: str(int(round(x))))
 
 #plt.figure(figsize=(5, 2))
 plt.show()
+
 
 
 
